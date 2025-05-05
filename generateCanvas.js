@@ -18,21 +18,29 @@ function updateCanvas(templateInfo, contents) {
  * @param {string} content 
  */
 function drawText(context, sectionInfo, content) {
+  let xStart = sectionInfo.xStart
+  let xEnd = sectionInfo.xEnd
+  let x
+  if (sectionInfo.textAlign == 'center') {
+    x = xStart + xEnd / 2
+  } else {
+    x = xStart
+  }
   context.font = `${fitText(context, content, sectionInfo)}px ${sectionInfo.font}`;
   context.fillStyle = sectionInfo.color;
   context.textAlign = sectionInfo.textAlign;
-  context.fillText(content, sectionInfo.xStart, sectionInfo.y);
+  context.fillText(content, x, sectionInfo.y);
 }
 
 
 function drawNameText(context, sectionInfo, firstName, lastName) {
-  fitNameText(context, firstName + ' ' + lastName, sectionInfo.initialSize, sectionInfo.minSize, sectionInfo.maxWidth, sectionInfo.font, sectionInfo.firstName, sectionInfo.lastName);
+  fitNameText(context, sectionInfo.initialSize, sectionInfo.minSize, sectionInfo.maxWidth, sectionInfo.font, sectionInfo.firstName, sectionInfo.lastName);
 }
 
-function fitText(context, text, { initialFontSize, minFontSize, maxWidth, fontFamily }) {
-  let fontSize = initialFontSize;
-  while (fontSize > minFontSize) {
-    context.font = `${fontSize}px ${fontFamily}`;
+function fitText(context, text, { initialSize, minSize, maxWidth, font }) {
+  let fontSize = initialSize;
+  while (fontSize > minSize) {
+    context.font = `${fontSize}px ${font}`;
     const textWidth = context.measureText(text).width;
     if (textWidth <= maxWidth) return fontSize;
     fontSize -= 0.1;
@@ -41,8 +49,8 @@ function fitText(context, text, { initialFontSize, minFontSize, maxWidth, fontFa
 }
 
 function fitNameText(context, initialFontSize, minFontSize, maxWidth, fontFamily, firstName, lastName, splitWhenSmallerThan) {
-  let fontSize = fitText(context, firstName + ' ' + lastName, initialFontSize, minFontSize, maxWidth, fontFamily);
-  if (fontSize < minFontSize) {
+  let fontSize = fitText(context, firstName + ' ' + lastName, { initialFontSize, minFontSize, maxWidth, fontFamily });
+  if (fontSize < splitWhenSmallerThan) {
     fontSize = calculateSplitFontSize(context, firstName, lastName, initialFontSize, minFontSize, firstName, lastName, fontFamily);
   }
   return { fontSize, shouldSplit };

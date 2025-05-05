@@ -29,12 +29,7 @@ function getInputsValue(section, sectionDiv) {
       } else {
         section[field] = input.value;
       }
-      if(field == 'x'){
-        if(section.textAlign == 'center'){
-          let xStart = input
-          section[field] = input.value 
-        }
-      }
+
     }
   }
 }
