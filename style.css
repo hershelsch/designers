@@ -3,7 +3,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f4f4f9;
+    background: linear-gradient(135deg, #f4f4f9 0%, #e0e7ff 100%);
     margin: 0;
     font-family: Arial, sans-serif;
 }
@@ -16,7 +16,8 @@ body {
     max-width: 1200px;
     padding: 20px 40px;
     box-sizing: border-box;
-    gap: 40px;
+    gap: 60px;
+    margin-top: 40px;
 }
 
 div#settings-form{
@@ -26,35 +27,80 @@ div#settings-form{
     padding: 20px;
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1.5px solid #e0e7ff;
+    box-shadow: 0 6px 24px rgba(60, 60, 120, 0.08);
     height: 600px;
     overflow-y: auto;
     position: sticky;
     top: 50px;
+    transition: box-shadow 0.2s;
+    min-width: 215px;
+    width: 420px;
+}
+div#settings-form:hover {
+    box-shadow: 0 8px 32px rgba(60, 60, 120, 0.13);
 }
 
-#settings-form label {
-    margin-top: 5px;
-    font-weight: bold;
-    display: block;
-    font-size: small;
+#settings-form label, #content label {
+    margin-top: 4px;
+    margin-bottom: 2px;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #2d3748;
+    background: none;
+    padding: 0;
+    border: none;
+    letter-spacing: 0.01em;
 }
 
 .section-label {
-    margin-top: 5px;
-    font-weight: bold;
+    margin-top: 32px;
+    margin-bottom: 12px;
+    font-size: 1.18rem;
+    font-weight: 600;
+    color: #3b3663;
+    background: none;
+    border-radius: 0;
+    border-left: none;
+    border-bottom: 1px solid #d1d5db;
+    padding: 0 0 6px 0;
+    box-shadow: none;
+    letter-spacing: 0.03em;
     display: block;
-    font-size: small;
 }
 
-#settings-form input {
-    padding: 10px;
-    margin-bottom: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+#settings-form input, #content input, #settings-form select {
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 6px;
     width: 100%;
     box-sizing: border-box;
+    font-size: 1rem;
+    background: #f9fafb;
+    transition: border 0.2s, box-shadow 0.2s;
 }
+#settings-form input:focus, #content input:focus, #settings-form select:focus {
+    border-color: #6366f1;
+    outline: none;
+    box-shadow: 0 0 0 2px #a5b4fc44;
+}
+#settings-form select {
+    cursor: pointer;
+}
+#settings-form input[type="file"] {
+    margin-top: 10px;
+    padding: 7px;
+    border: 1.5px dashed #a5b4fc;
+    background: #f1f5ff;
+    color: #3b3663;
+    font-size: 0.98rem;
+}
+#settings-form input[type="file"]:hover {
+    border-color: #6366f1;
+    background: #e0e7ff;
+}
+
 #content{
     display: flex;
     flex-direction: column;
@@ -62,39 +108,59 @@ div#settings-form{
     padding: 20px;
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1.5px solid #e0e7ff;
+    box-shadow: 0 6px 24px rgba(60, 60, 120, 0.08);
     height: 600px;
     overflow-y: auto;
     position: sticky;
     top: 50px;
-}
-#content label {
-    margin-top: 5px;
-    font-weight: bold;
-    display: block;
-    font-size: small;
-}
-#content input {
-    padding: 10px;
-    margin-bottom: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 100%;
-    box-sizing: border-box;
-}
-#settings-form input[type="file"] {
-    margin-top: 5px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-#settings-form input[type="file"]:hover {
-    border-color: #888;
+    min-width: 320px;
 }
 
 canvas{
-    border: 2px solid #ccc;
-    margin-right: 20px;
+    border: 3px solid #a5b4fc;
+    border-radius: 10px;
+    margin-right: 40px;
+    box-shadow: 0 4px 24px rgba(60, 60, 120, 0.10);
+    background: #fff;
+    transition: box-shadow 0.2s;
+}
+canvas:hover {
+    box-shadow: 0 8px 32px rgba(60, 60, 120, 0.18);
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    background: #f4f4f9;
+}
+::-webkit-scrollbar-thumb {
+    background: #e0e7ff;
+    border-radius: 4px;
+}
+
+.nav-arrow {
+    background: #f4f4f9;
+    border: 1px solid #bbb;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 1.1rem;
+    color: #666;
+    margin: 2px 6px 2px 0;
+    cursor: pointer;
+    transition: background 0.2s, border 0.2s;
+    vertical-align: middle;
+    box-shadow: 0 1px 2px rgba(60,60,120,0.04);
+}
+.nav-arrow:hover {
+    background: #e5e5e5;
+    border-color: #888;
+    color: #222;
+}
+.section-nav-arrows {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 8px;
+    margin-bottom: 8px;
 }

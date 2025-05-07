@@ -1,8 +1,11 @@
-
 function gatherInfo(templateInfo) {
   console.log(JSON.parse(JSON.stringify(templateInfo)));
   for (const section in templateInfo) {
     const sectionDiv = document.getElementById(`${section}-section`);
+    if (!sectionDiv){
+      console.log(`Section ${section} not found`);
+      continue;
+    }
     const sectionInfo = templateInfo[section];
 
     getInputsValue(sectionInfo, sectionDiv);
@@ -33,10 +36,35 @@ function getInputsValue(section, sectionDiv) {
     }
   }
 }
+function gatherInfoForContents(contents) {  
+  for (const field in contents) {
+    const input = document.getElementById(field);
+    if (input) {
+      if (input.type == 'checkbox') {
+        contents[field] = input.checked;
+      } else {
+        contents[field] = input.value;
+      }
+    }
+  }
+  console.log(contents)
+}
+function gatherInfoAndUpdateCanvas(inputElement) {
+  const settingsDiv = document.getElementById('settings-form');
+  const contentDiv = document.getElementById('content');
+  if (settingsDiv.contains(inputElement)) {
+     gatherInfo(templateInfo);
+ 
+  } else if (contentDiv.contains(inputElement)) {
+    gatherInfoForContents(contents);
+    console.log('Contents updated:', contents);
+  }
+  updateCanvas(canvas, image, templateInfo, contents);
+}
 
-
-document.querySelectorAll('input').forEach((input) => {
-  input.addEventListener('input', () => {
-    gatherInfo(templateInfo);
+// Attach input listeners to all inputs and selects
+document.querySelectorAll('input, select').forEach((input) => {
+  input.addEventListener('input', (event) => {
+    gatherInfoAndUpdateCanvas(event.target);
   });
 });

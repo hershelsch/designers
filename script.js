@@ -22,7 +22,10 @@ const labelNames = {
   color: 'קאליר',
   initialSize: 'די סייז וואס די אותיות זאלן זיין',
   maxWidth: 'ביז ווי ברייט מעגן די ווערטער זיין',
-  minSize: 'ביז ווי קליין מעגן די אותיות ווערן'
+  minSize: 'ביז ווי קליין מעגן די אותיות ווערן',
+  textAlign: 'טעקסט פאזיציע',
+  initialOneLine: 'לכתחילה זאלן זיי זיין איין שורה',
+  splitWhenSmallerThan: 'צוטייל ווען סאיז קלענער ווי',
 }
 document.getElementById('template-upload').addEventListener('input', () => {
   createCanvas(new FormData(document.getElementById('form')));
@@ -169,10 +172,37 @@ const templateInfo = {
 
 function generateForm() {
   const settingsDiv = document.getElementById('settings-form')
-  sections.forEach(section => {
+  sections.forEach((section, idx) => {
     const sectionDiv = document.createElement('div');
     sectionDiv.classList.add('section-div');
     sectionDiv.id = `${section}-section`;
+    // Add navigation arrows at the top
+    const navDiv = document.createElement('div');
+    navDiv.className = 'section-nav-arrows';
+    if (idx > 0) {
+      const upBtn = document.createElement('button');
+      upBtn.type = 'button';
+      upBtn.className = 'nav-arrow nav-arrow-up';
+      upBtn.title = 'Previous section';
+      upBtn.innerHTML = '▲';
+      upBtn.onclick = () => {
+        document.getElementById(`${sections[idx-1]}-section`).scrollIntoView({behavior: 'smooth', block: 'start'});
+      };
+      navDiv.appendChild(upBtn);
+    }
+    if (idx < sections.length - 1) {
+      const downBtn = document.createElement('button');
+      downBtn.type = 'button';
+      downBtn.className = 'nav-arrow nav-arrow-down';
+      downBtn.title = 'Next section';
+      downBtn.innerHTML = '▼';
+      downBtn.onclick = () => {
+        document.getElementById(`${sections[idx+1]}-section`).scrollIntoView({behavior: 'smooth', block: 'start'});
+      };
+      navDiv.appendChild(downBtn);
+    }
+    sectionDiv.appendChild(navDiv);
+    // Section label after arrows
     const sectionLabel = document.createElement('h3');
     sectionLabel.classList.add('section-label');
     sectionLabel.textContent = sectionLabelNames[section] || section;
@@ -256,6 +286,32 @@ function createInputsForNameSubSection(nameSubSectionDiv, name) {
 }
 
 function createInput(sectionDiv, type, key, section) {
+  // Add datalist for fonts if not present
+  if (!document.getElementById('font-list')) {
+    const fontDatalist = document.createElement('datalist');
+    fontDatalist.id = 'font-list';
+    // Add some common fonts
+    ['Arial', 'Times New Roman', 'Courier New', 'Georgia', 'Verdana', 'Tahoma'].forEach(font => {
+      const option = document.createElement('option');
+      option.value = font;
+      fontDatalist.appendChild(option);
+    });
+    document.body.appendChild(fontDatalist);
+  }
+  if (key === 'font') {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.name = key;
+    input.id = `${section}-${key}`;
+    input.dataset.for = key;
+    input.setAttribute('list', 'font-list');
+    const label = document.createElement('label');
+    label.htmlFor = input.id;
+    label.textContent = labelNames[key] || key;
+    sectionDiv.appendChild(label);
+    sectionDiv.appendChild(input);
+    return;
+  }
   const input = document.createElement('input');
   input.type = type;
   input.name = key;
@@ -284,28 +340,11 @@ function createTextAlignDropdown(sectionDiv, section) {
   });
   const label = document.createElement('label');
   label.htmlFor = select.id;
-
   label.textContent = labelNames.textAlign || 'text-align';
   sectionDiv.appendChild(label);
   sectionDiv.appendChild(select);
 }
-function createCanvas(formData) {
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  const background = formData.get('templateUpload')
-  if (background) {
-    image = new Image();
-    image.onload = function () {
-      canvas.width = image.width
-      canvas.height = image.height
-      context.drawImage(image, 0, 0, canvas.width, canvas.height);
-    }
-    image.src = URL.createObjectURL(background);
-  } else {
-    image = null;
-  }
-}
-generateContentInputs();
-generateForm();
+
 //change the function it should add and remove elements
 document.querySelectorAll('select[name="textAlign"]').forEach((select) => {
   select.addEventListener('input', () => {
@@ -341,6 +380,8 @@ document.querySelectorAll('select[name="textAlign"]').forEach((select) => {
   });
 });
 
+generateContentInputs();
+generateForm();
 
 
 const form = document.getElementById('settings-form');
@@ -355,3 +396,66 @@ form.querySelectorAll('input[type="checkbox"][data-for="centerOfPage"]').forEach
     }
   });
 });
+
+
+
+// Font upload and registration
+const fontUploadInput = document.getElementById('font-upload');
+fontUploadInput.addEventListener('change', async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  const fontName = file.name.replace(/\.[^/.]+$/, "");
+  const fontData = await file.arrayBuffer();
+  const font = new FontFace(fontName, fontData);
+  try {
+    await font.load();
+    document.fonts.add(font);
+    // Add the font to the datalist
+    let fontDatalist = document.getElementById('font-list');
+    if (!fontDatalist) {
+      fontDatalist = document.createElement('datalist');
+      fontDatalist.id = 'font-list';
+      document.body.appendChild(fontDatalist);
+    }
+    if (!Array.from(fontDatalist.options).some(opt => opt.value === fontName)) {
+      const option = document.createElement('option');
+      option.value = fontName;
+      fontDatalist.appendChild(option);
+    }
+    alert(`Font '${fontName}' registered! You can now use it in the font field.`);
+    // Wait for font to be ready, then update canvas
+    await document.fonts.ready;
+    updateCanvas(canvas, image, templateInfo, contents);
+  } catch (e) {
+    alert('Failed to load font: ' + e);
+  }
+});
+
+// Scroll to settings section when content input is focused
+Object.keys(contents).forEach((key) => {
+  const input = document.getElementById(key);
+  if (input) {
+    input.addEventListener('focus', () => {
+      const sectionDiv = document.getElementById(`${key}-section`);
+      if (sectionDiv) {
+        sectionDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
+});
+
+function createCanvas(formData) {
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  const background = formData.get('templateUpload');
+  if (background) {
+    image = new Image();
+    image.onload = function () {
+      canvas.width = image.width;
+      canvas.height = image.height;
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    };
+    image.src = URL.createObjectURL(background);
+  } else {
+    image = null;
+  }
+}
