@@ -14,7 +14,6 @@ function updateCanvas(canvas, image, textConfig, contents) {
     }
     const { fontSize, shouldSplit } = determineNameTextLayout(context, textConfig['name'], firstName, lastName);
     if (shouldSplit) {
-        console.log(textConfig)
         drawText(context, firstName, {...textConfig.name.firstName, color: textConfig.name.color , font:textConfig.name.font}, fontSize);
         drawText(context, lastName, {...textConfig.name.lastName, color: textConfig.name.color , font:textConfig.name.font}, fontSize);
     } else {
@@ -53,14 +52,11 @@ function fitText(context, text, { initialSize, minSize, maxWidth, font }) {
     return fontSize;
 }
 function drawText(context, text, textConfig, fontSize) {
-    console.log(fontSize)
     const x = setXPosition(textConfig);
     if (text === '') {
         return;
     }
     context.font = `${fontSize ||fitText(context, text, textConfig)}px ${textConfig.font}`;
-    console.log(context.font)
-    console.log(textConfig)
     context.fillStyle = textConfig.color;
     context.textAlign = textConfig.textAlign;
     context.fillText(text, x, textConfig.y);

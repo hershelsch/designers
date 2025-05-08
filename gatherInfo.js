@@ -1,9 +1,7 @@
 function gatherInfo(templateInfo) {
-  console.log(JSON.parse(JSON.stringify(templateInfo)));
   for (const section in templateInfo) {
     const sectionDiv = document.getElementById(`${section}-section`);
     if (!sectionDiv){
-      console.log(`Section ${section} not found`);
       continue;
     }
     const sectionInfo = templateInfo[section];
@@ -20,7 +18,6 @@ function gatherInfo(templateInfo) {
       }
     }
   }
-  console.log(templateInfo)
 }
 
 function getInputsValue(section, sectionDiv) {
@@ -47,7 +44,6 @@ function gatherInfoForContents(contents) {
       }
     }
   }
-  console.log(contents)
 }
 function gatherInfoAndUpdateCanvas(inputElement) {
   const settingsDiv = document.getElementById('settings-form');
@@ -57,7 +53,6 @@ function gatherInfoAndUpdateCanvas(inputElement) {
  
   } else if (contentDiv.contains(inputElement)) {
     gatherInfoForContents(contents);
-    console.log('Contents updated:', contents);
   }
   updateCanvas(canvas, image, templateInfo, contents);
 }
