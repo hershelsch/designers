@@ -22,14 +22,14 @@ function gatherInfo(templateInfo) {
 
 function getInputsValue(section, sectionDiv) {
   for (const field in section) {
-    const input = sectionDiv.querySelector(`:scope > [name="${field}"]`);
+    // Look for inputs either directly in the section or in the x-input-container
+    const input = sectionDiv.querySelector(`:scope > [name="${field}"], :scope > .x-input-container > [name="${field}"]`);
     if (input) {
       if (input.type == 'checkbox') {
         section[field] = input.checked;
       } else {
         section[field] = input.value;
       }
-
     }
   }
 }

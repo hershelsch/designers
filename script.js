@@ -15,8 +15,7 @@ const sectionLabelNames = {
 const labelNames = {
   content: 'ווערטער',
   y: 'ווי ווייט זאל עס זיין פון אויבן',
-  xStart: 'ווי ווייט פון די לינקע זייט',
-  xEnd: 'ביז ווי',
+  x: 'ווי ווייט פון די לינקע זייט',
   centerOfPage: 'זאל עס זיין אינמיטען',
   font: 'פאנט',
   color: 'קאליר',
@@ -51,10 +50,9 @@ const contentLabels = {
 
 const inputsTypesForMostSections = {
   y: 'number',
+  x: 'number',
+  centerOfPage: 'button',
   textAlign: 'select',
-  xStart: 'number',
-  xEnd: 'number',
-  centerOfPage: 'checkbox',
   font: 'text',
   color: 'color',
   initialSize: 'number',
@@ -65,10 +63,9 @@ const inputsTypesForNameSection = {
   initialOneLine: 'checkbox',
   splitWhenSmallerThan: 'number',
   y: 'number',
+  x: 'number',
+  centerOfPage: 'button',
   textAlign: 'select',
-  xStart: 'number',
-  xEnd: 'number',
-  centerOfPage: 'checkbox',
   font: 'text',
   color: 'color',
   initialSize: 'number',
@@ -77,20 +74,17 @@ const inputsTypesForNameSection = {
 }
 const inputsTypesForNameSubSections = {
   y: 'number',
+  x: 'number',
+  centerOfPage: 'button',
   textAlign: 'select',
-  xStart: 'number',
-  xEnd: 'number',
-  centerOfPage: 'checkbox',
   maxWidth: 'number'
-  
 }
 const sections = ['when', 'where', 'address', 'name', 'fathersName', 'fatherInlawsName'];
 const templateInfo = {
   when: {
     y: 0,
+    x: 0,
     textAlign: '',
-    xStart: 0,
-    xEnd: 0,
     font: '',
     color: '',
     initialSize: 0,
@@ -99,9 +93,8 @@ const templateInfo = {
   },
   where: {
     y: 0,
+    x: 0,
     textAlign: '',
-    xStart: 0,
-    xEnd: 0,
     font: '',
     color: '',
     initialSize: 0,
@@ -110,9 +103,8 @@ const templateInfo = {
   },
   address: {
     y: 0,
+    x: 0,
     textAlign: '',
-    xStart: 0,
-    xEnd: 0,
     font: '',
     color: '',
     initialSize: 0,
@@ -123,9 +115,8 @@ const templateInfo = {
     initialOneLine: true,
     splitWhenSmallerThan: 0,
     y: 0,
+    x: 0,
     textAlign: '',
-    xStart: 0,
-    xEnd: 0,
     font: '',
     color: '',
     initialSize: 0,
@@ -134,23 +125,20 @@ const templateInfo = {
     firstName: {
       y: 0,
       textAlign: '',
-      xStart: 0,
-      xEnd: 0,
+      x: 0,
       maxWidth: 0
     },
     lastName: {
       y: 0,
       textAlign: '',
-      xStart: 0,
-      xEnd: 0,
+      x: 0,
       maxWidth: 0
     }
   },
   fathersName: {
     y: 0,
+    x: 0,
     textAlign: '',
-    xStart: 0,
-    xEnd: 0,
     font: '',
     color: '',
     initialSize: 0,
@@ -159,9 +147,8 @@ const templateInfo = {
   },
   fatherInlawsName: {
     y: 0,
+    x: 0,
     textAlign: '',
-    xStart: 0,
-    xEnd: 0,
     font: '',
     color: '',
     initialSize: 0,
@@ -186,7 +173,7 @@ function generateForm() {
       upBtn.title = 'Previous section';
       upBtn.innerHTML = '▲';
       upBtn.onclick = () => {
-        document.getElementById(`${sections[idx-1]}-section`).scrollIntoView({behavior: 'smooth', block: 'start'});
+        document.getElementById(`${sections[idx - 1]}-section`).scrollIntoView({ behavior: 'smooth', block: 'start' });
       };
       navDiv.appendChild(upBtn);
     }
@@ -197,7 +184,7 @@ function generateForm() {
       downBtn.title = 'Next section';
       downBtn.innerHTML = '▼';
       downBtn.onclick = () => {
-        document.getElementById(`${sections[idx+1]}-section`).scrollIntoView({behavior: 'smooth', block: 'start'});
+        document.getElementById(`${sections[idx + 1]}-section`).scrollIntoView({ behavior: 'smooth', block: 'start' });
       };
       navDiv.appendChild(downBtn);
     }
@@ -286,11 +273,9 @@ function createInputsForNameSubSection(nameSubSectionDiv, name) {
 }
 
 function createInput(sectionDiv, type, key, section) {
-  // Add datalist for fonts if not present
   if (!document.getElementById('font-list')) {
     const fontDatalist = document.createElement('datalist');
     fontDatalist.id = 'font-list';
-    // Add some common fonts
     ['Arial', 'Times New Roman', 'Courier New', 'Georgia', 'Verdana', 'Tahoma'].forEach(font => {
       const option = document.createElement('option');
       option.value = font;
@@ -312,16 +297,49 @@ function createInput(sectionDiv, type, key, section) {
     sectionDiv.appendChild(input);
     return;
   }
+  if (key === 'centerOfPage') {
+    return; // Skip creating input for centerOfPage since we handle it separately
+  }
+  
   const input = document.createElement('input');
   input.type = type;
   input.name = key;
   input.id = `${section}-${key}`;
   input.dataset.for = key;
+  
   const label = document.createElement('label');
   label.htmlFor = input.id;
   label.textContent = labelNames[key] || key;
-  sectionDiv.appendChild(label);
-  sectionDiv.appendChild(input);
+  
+  // If this is an x input, create special container with center button
+  if (key === 'x') {
+    const container = document.createElement('div');
+    container.className = 'x-input-container';
+    
+    sectionDiv.appendChild(label);
+    container.appendChild(input);
+    
+    const centerContainer = document.createElement('div');
+    centerContainer.className = 'center-of-page-container';
+    const centerButton = document.createElement('button');
+    centerButton.type = 'button';
+    centerButton.id = `${section}-centerOfPage`;
+    centerButton.dataset.for = 'centerOfPage';
+    centerButton.innerHTML = '✓';
+    centerContainer.appendChild(centerButton);
+    container.appendChild(centerContainer);
+    sectionDiv.appendChild(container);
+    
+    centerButton.addEventListener('click', () => {
+      const input = document.getElementById(`${section}-x`);
+      if (input) {
+        input.value = canvas.width / 2;
+      }
+    });
+  } else {
+    sectionDiv.appendChild(label);
+    sectionDiv.appendChild(input);
+  }
 }
 
 function createTextAlignDropdown(sectionDiv, section) {
@@ -345,61 +363,11 @@ function createTextAlignDropdown(sectionDiv, section) {
   sectionDiv.appendChild(select);
 }
 
-//change the function it should add and remove elements
-document.querySelectorAll('select[name="textAlign"]').forEach((select) => {
-  select.addEventListener('input', () => {
-    const parentDiv = select.parentElement;
-    const xEndElement = parentDiv.querySelector(`[data-for="xEnd"]`);
-    const xendlabel = parentDiv.querySelector(`label[for="${xEndElement.id}"]`);
-    const centerOfPageElement = parentDiv.querySelector(`[data-for="centerOfPage"]`);
-    const centerOfPageLabel = parentDiv.querySelector(`label[for="${centerOfPageElement.id}"]`);
 
-    switch (select.value) {
-      case 'left':
-      case 'right': {
-        if (xEndElement) {
-          xEndElement.style.display = 'none';
-          xendlabel.style.display = 'none';
-          centerOfPageElement.style.display = 'none';
-          centerOfPageLabel.style.display = 'none';
-        }
-
-        break;
-      }
-      case 'center':
-        if (xEndElement) {
-          xEndElement.style.display = 'block';
-          xendlabel.style.display = 'block';
-          centerOfPageElement.style.display = 'block';
-          centerOfPageLabel.style.display = 'block';
-        }
-        break;
-      default:
-        break;
-    }
-  });
-});
 
 generateContentInputs();
 generateForm();
 
-
-const form = document.getElementById('settings-form');
-form.querySelectorAll('input[type="checkbox"][data-for="centerOfPage"]').forEach((input) => {
-  input.addEventListener('input', () => {
-    if (input.checked) {
-      const parentDiv = input.parentElement; // Get the parent div containing the inputs
-      const xStartElement = parentDiv.querySelector(`[data-for="xStart"]`);
-      const xEndElement = parentDiv.querySelector(`[data-for="xEnd"]`);
-      if (xStartElement) xStartElement.value = 0;
-      if (xEndElement) xEndElement.value = canvas.width;
-    }
-  });
-});
-
-
-
-// Font upload and registration
 const fontUploadInput = document.getElementById('font-upload');
 fontUploadInput.addEventListener('change', async (event) => {
   const file = event.target.files[0];
@@ -410,7 +378,6 @@ fontUploadInput.addEventListener('change', async (event) => {
   try {
     await font.load();
     document.fonts.add(font);
-    // Add the font to the datalist
     let fontDatalist = document.getElementById('font-list');
     if (!fontDatalist) {
       fontDatalist = document.createElement('datalist');
@@ -423,7 +390,6 @@ fontUploadInput.addEventListener('change', async (event) => {
       fontDatalist.appendChild(option);
     }
     alert(`Font '${fontName}' registered! You can now use it in the font field.`);
-    // Wait for font to be ready, then update canvas
     await document.fonts.ready;
     updateCanvas(canvas, image, templateInfo, contents);
   } catch (e) {
@@ -431,7 +397,6 @@ fontUploadInput.addEventListener('change', async (event) => {
   }
 });
 
-// Scroll to settings section when content input is focused
 Object.keys(contents).forEach((key) => {
   const input = document.getElementById(key);
   if (input) {

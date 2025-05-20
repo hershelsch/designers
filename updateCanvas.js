@@ -14,8 +14,8 @@ function updateCanvas(canvas, image, textConfig, contents) {
     }
     const { fontSize, shouldSplit } = determineNameTextLayout(context, textConfig['name'], firstName, lastName);
     if (shouldSplit) {
-        drawText(context, firstName, {...textConfig.name.firstName, color: textConfig.name.color , font:textConfig.name.font}, fontSize);
-        drawText(context, lastName, {...textConfig.name.lastName, color: textConfig.name.color , font:textConfig.name.font}, fontSize);
+        drawText(context, firstName, { ...textConfig.name.firstName, color: textConfig.name.color, font: textConfig.name.font }, fontSize);
+        drawText(context, lastName, { ...textConfig.name.lastName, color: textConfig.name.color, font: textConfig.name.font }, fontSize);
     } else {
         drawText(context, `${firstName} ${lastName}`, textConfig.name, fontSize);
     }
@@ -31,13 +31,13 @@ function determineNameTextLayout(context, textConfig, firstName, lastName) {
         }
     }
 
-    fontSize = calculateSplitFontSize(context, firstName, lastName,textConfig);
+    fontSize = calculateSplitFontSize(context, firstName, lastName, textConfig);
     return { fontSize, shouldSplit: true };
 }
 
 function calculateSplitFontSize(context, firstName, lastName, textConfig) {
-    const firstNameFontSize = fitText(context, firstName,{ ...textConfig, maxWidth: textConfig.firstName.maxWidth });
-    const lastNameFontSize = fitText(context, lastName,{ ...textConfig, maxWidth: textConfig.lastName.maxWidth });
+    const firstNameFontSize = fitText(context, firstName, { ...textConfig, maxWidth: textConfig.firstName.maxWidth });
+    const lastNameFontSize = fitText(context, lastName, { ...textConfig, maxWidth: textConfig.lastName.maxWidth });
     return Math.min(firstNameFontSize, lastNameFontSize);
 }
 
@@ -52,21 +52,12 @@ function fitText(context, text, { initialSize, minSize, maxWidth, font }) {
     return fontSize;
 }
 function drawText(context, text, textConfig, fontSize) {
-    const x = setXPosition(textConfig);
+    const { x, y, textAlign, color, font } = textConfig;
     if (text === '') {
         return;
     }
-    context.font = `${fontSize ||fitText(context, text, textConfig)}px ${textConfig.font}`;
-    context.fillStyle = textConfig.color;
-    context.textAlign = textConfig.textAlign;
-    context.fillText(text, x, textConfig.y);
-}
-
-function setXPosition(textConfig) {
-    let xStart = textConfig.xStart;
-    let xEnd = textConfig.xEnd;
-    if (textConfig.textAlign == 'center') {
-        xStart = (xStart + xEnd) / 2;
-    }
-    return xStart;
+    context.font = `${fontSize || fitText(context, text, textConfig)}px ${font}`;
+    context.fillStyle = color;
+    context.textAlign = textAlign;
+    context.fillText(text, x, y);
 }

@@ -8,6 +8,42 @@ body {
     font-family: Arial, sans-serif;
 }
 
+/* Center of page button styling */
+.center-of-page-container {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 8px;
+}
+
+button[data-for="centerOfPage"] {
+    background: #f4f4f9;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #3b3663;
+    cursor: pointer;
+    transition: border 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 2px rgba(60,60,120,0.04);
+}
+
+button[data-for="centerOfPage"]:hover {
+    border-color: #6366f1;
+    box-shadow: 0 2px 4px rgba(60,60,120,0.08);
+}
+
+button[data-for="centerOfPage"]:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(60,60,120,0.04);
+}
+
+/* Add relative positioning to the parent container */
+[data-for="centerOfPage"]:parent {
+    position: relative;
+}
+
 #container {
     display: flex;
     justify-content: flex-start;
@@ -163,4 +199,15 @@ canvas:hover {
     align-items: center;
     margin-top: 8px;
     margin-bottom: 8px;
+}
+
+/* Add flexbox to handle x input and center button layout */
+.x-input-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.x-input-container input {
+    flex: 1;
 }
