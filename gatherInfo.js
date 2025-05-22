@@ -27,24 +27,30 @@ function getInputsValue(section, sectionDiv) {
     if (input) {
       if (input.type == 'checkbox') {
         section[field] = input.checked;
+      } else if (input.type == 'number') {
+        section[field] = parseFloat(input.value);
       } else {
         section[field] = input.value;
       }
     }
   }
 }
+
 function gatherInfoForContents(contents) {  
   for (const field in contents) {
     const input = document.getElementById(field);
     if (input) {
       if (input.type == 'checkbox') {
         contents[field] = input.checked;
+      } else if (input.type == 'number') {
+        contents[field] = parseFloat(input.value);
       } else {
         contents[field] = input.value;
       }
     }
   }
 }
+
 function gatherInfoAndUpdateCanvas(inputElement) {
   const settingsDiv = document.getElementById('settings-form');
   const contentDiv = document.getElementById('content');

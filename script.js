@@ -25,6 +25,10 @@ const labelNames = {
   textAlign: 'טעקסט פאזיציע',
   initialOneLine: 'לכתחילה זאלן זיי זיין איין שורה',
   splitWhenSmallerThan: 'צוטייל ווען סאיז קלענער ווי',
+  shadowColor: 'שאטן קאליר',
+  shadowBlur: 'שאטן בלור',
+  shadowOffsetX: 'אקס שאטן',
+  shadowOffsetY: 'וי שאטן',
 }
 document.getElementById('template-upload').addEventListener('input', () => {
   createCanvas(new FormData(document.getElementById('form')));
@@ -55,6 +59,10 @@ const inputsTypesForMostSections = {
   textAlign: 'select',
   font: 'text',
   color: 'color',
+  shadowColor: 'color',
+  shadowBlur: 'number',
+  shadowOffsetX: 'number',
+  shadowOffsetY: 'number',
   initialSize: 'number',
   maxWidth: 'number',
   minSize: 'number'
@@ -68,6 +76,10 @@ const inputsTypesForNameSection = {
   textAlign: 'select',
   font: 'text',
   color: 'color',
+  shadowColor: 'color',
+  shadowBlur: 'number',
+  shadowOffsetX: 'number',
+  shadowOffsetY: 'number',
   initialSize: 'number',
   maxWidth: 'number',
   minSize: 'number'
@@ -87,6 +99,12 @@ const templateInfo = {
     textAlign: '',
     font: '',
     color: '',
+    shadow: {
+      color: '',
+      blur: 0,
+      offsetX: 0,
+      offsetY: 0
+    },
     initialSize: 0,
     maxWidth: 0,
     minSize: 0
@@ -97,6 +115,12 @@ const templateInfo = {
     textAlign: '',
     font: '',
     color: '',
+    shadow: {
+      color: '',
+      blur: 0,
+      offsetX: 0,
+      offsetY: 0
+    },
     initialSize: 0,
     maxWidth: 0,
     minSize: 0
@@ -107,6 +131,12 @@ const templateInfo = {
     textAlign: '',
     font: '',
     color: '',
+    shadow: {
+      color: '',
+      blur: 0,
+      offsetX: 0,
+      offsetY: 0
+    },
     initialSize: 0,
     maxWidth: 0,
     minSize: 0
@@ -119,6 +149,12 @@ const templateInfo = {
     textAlign: '',
     font: '',
     color: '',
+    shadow: {
+      color: '',
+      blur: 0,
+      offsetX: 0,
+      offsetY: 0
+    },
     initialSize: 0,
     maxWidth: 0,
     minSize: 0,
@@ -141,6 +177,12 @@ const templateInfo = {
     textAlign: '',
     font: '',
     color: '',
+    shadow: {
+      color: '',
+      blur: 0,
+      offsetX: 0,
+      offsetY: 0
+    },
     initialSize: 0,
     maxWidth: 0,
     minSize: 0
@@ -151,6 +193,12 @@ const templateInfo = {
     textAlign: '',
     font: '',
     color: '',
+    shadow: {
+      color: '',
+      blur: 0,
+      offsetX: 0,
+      offsetY: 0
+    },
     initialSize: 0,
     maxWidth: 0,
     minSize: 0
@@ -221,9 +269,29 @@ function createInputs(sectionDiv, section) {
   }
 }
 function createInputsForMostSections(sectionDiv, section) {
+  // Create a single shadow section for all shadow properties
+  let shadowDiv = null;
+  
   for (const key in inputsTypesForMostSections) {
     if (key === 'textAlign') {
       createTextAlignDropdown(sectionDiv, section);
+    }
+    else if (key.startsWith('shadow')) {
+      // Only create the shadow div once for all shadow properties
+      if (!shadowDiv) {
+        // First check if it already exists in the DOM
+        shadowDiv = document.getElementById(`${section}-shadow-section`);
+        if (!shadowDiv) {
+          shadowDiv = document.createElement('div');
+          shadowDiv.id = `${section}-shadow-section`;
+          shadowDiv.classList.add('shadow-section');
+          const shadowLabel = document.createElement('h3');
+          shadowLabel.textContent = 'שאטן';
+          shadowDiv.appendChild(shadowLabel);
+          sectionDiv.appendChild(shadowDiv);
+        }
+      }
+      createInput(shadowDiv, inputsTypesForMostSections[key], key, section);
     } else {
       createInput(sectionDiv, inputsTypesForMostSections[key], key, section);
     }
@@ -300,25 +368,25 @@ function createInput(sectionDiv, type, key, section) {
   if (key === 'centerOfPage') {
     return; // Skip creating input for centerOfPage since we handle it separately
   }
-  
+
   const input = document.createElement('input');
   input.type = type;
   input.name = key;
   input.id = `${section}-${key}`;
   input.dataset.for = key;
-  
+
   const label = document.createElement('label');
   label.htmlFor = input.id;
   label.textContent = labelNames[key] || key;
-  
+
   // If this is an x input, create special container with center button
   if (key === 'x') {
     const container = document.createElement('div');
     container.className = 'x-input-container';
-    
+
     sectionDiv.appendChild(label);
     container.appendChild(input);
-    
+
     const centerContainer = document.createElement('div');
     centerContainer.className = 'center-of-page-container';
     const centerButton = document.createElement('button');
@@ -329,7 +397,7 @@ function createInput(sectionDiv, type, key, section) {
     centerContainer.appendChild(centerButton);
     container.appendChild(centerContainer);
     sectionDiv.appendChild(container);
-    
+
     centerButton.addEventListener('click', () => {
       const input = document.getElementById(`${section}-x`);
       if (input) {

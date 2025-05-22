@@ -42,22 +42,47 @@ function calculateSplitFontSize(context, firstName, lastName, textConfig) {
 }
 
 function fitText(context, text, { initialSize, minSize, maxWidth, font }) {
-    let fontSize = initialSize;
-    while (fontSize > minSize) {
+    // Ensure all values are numbers
+    let fontSize = parseFloat(initialSize);
+    const minFontSize = parseFloat(minSize);
+    const maxTextWidth = parseFloat(maxWidth);
+    
+    // Add debugging to help diagnose issues
+    console.log(`fitText called with: initialSize=${fontSize}, minSize=${minFontSize}, maxWidth=${maxTextWidth}`);
+    
+    while (fontSize > minFontSize) {
         context.font = `${fontSize}px ${font}`;
         const textWidth = context.measureText(text).width;
-        if (textWidth <= maxWidth) return fontSize;
-        fontSize -= 0.1;
+        console.log(`Text width at ${fontSize}px: ${textWidth}`);
+        
+        if (textWidth <= maxTextWidth) return fontSize;
+        fontSize -= 0.5; // Slightly larger decrement for faster resizing
     }
+    
+    console.log(`Reached minimum font size: ${fontSize}`);
     return fontSize;
 }
 function drawText(context, text, textConfig, fontSize) {
-    const { x, y, textAlign, color, font } = textConfig;
+    const { x, y, textAlign, color, font, shadow } = textConfig;
     if (text === '') {
         return;
     }
     context.font = `${fontSize || fitText(context, text, textConfig)}px ${font}`;
     context.fillStyle = color;
     context.textAlign = textAlign;
+    
+    // Apply shadow if configured
+    if (shadow) {
+        context.shadowColor = shadow.color || 'rgba(0, 0, 0, 0.5)';
+        context.shadowBlur = shadow.blur || 4;
+        context.shadowOffsetX = shadow.offsetX || 2;
+        context.shadowOffsetY = shadow.offsetY || 2;
+    }
     context.fillText(text, x, y);
+    
+    // Reset shadow after drawing to prevent affecting other elements
+    context.shadowColor = 'transparent';
+    context.shadowBlur = 0;
+    context.shadowOffsetX = 0;
+    context.shadowOffsetY = 0;
 }
