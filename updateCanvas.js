@@ -14,8 +14,8 @@ function updateCanvas(canvas, image, textConfig, contents) {
     }
     const { fontSize, shouldSplit } = determineNameTextLayout(context, textConfig['name'], firstName, lastName);
     if (shouldSplit) {
-        drawText(context, firstName, { ...textConfig.name.firstName, color: textConfig.name.color, font: textConfig.name.font }, fontSize);
-        drawText(context, lastName, { ...textConfig.name.lastName, color: textConfig.name.color, font: textConfig.name.font }, fontSize);
+        drawText(context, firstName, { ...textConfig.name.firstName, color: textConfig.name.color, font: textConfig.name.font, shadowColor: textConfig.name.shadowColor, shadowBlur: textConfig.name.shadowBlur, shadowOffsetX: textConfig.name.shadowOffsetX, shadowOffsetY: textConfig.name.shadowOffsetY }, fontSize);
+        drawText(context, lastName, { ...textConfig.name.lastName, color: textConfig.name.color, font: textConfig.name.font, shadowColor: textConfig.name.shadowColor, shadowBlur: textConfig.name.shadowBlur, shadowOffsetX: textConfig.name.shadowOffsetX, shadowOffsetY: textConfig.name.shadowOffsetY }, fontSize);
     } else {
         drawText(context, `${firstName} ${lastName}`, textConfig.name, fontSize);
     }
@@ -47,9 +47,7 @@ function fitText(context, text, { initialSize, minSize, maxWidth, font }) {
     const minFontSize = parseFloat(minSize);
     const maxTextWidth = parseFloat(maxWidth);
     
-    // Add debugging to help diagnose issues
-    console.log(`fitText called with: initialSize=${fontSize}, minSize=${minFontSize}, maxWidth=${maxTextWidth}`);
-    
+     
     while (fontSize > minFontSize) {
         context.font = `${fontSize}px ${font}`;
         const textWidth = context.measureText(text).width;
@@ -59,11 +57,10 @@ function fitText(context, text, { initialSize, minSize, maxWidth, font }) {
         fontSize -= 0.5; // Slightly larger decrement for faster resizing
     }
     
-    console.log(`Reached minimum font size: ${fontSize}`);
     return fontSize;
 }
 function drawText(context, text, textConfig, fontSize) {
-    const { x, y, textAlign, color, font, shadow } = textConfig;
+    const { x, y, textAlign, color, font, shadowColor, shadowBlur, shadowOffsetX, shadowOffsetY } = textConfig;
     if (text === '') {
         return;
     }
@@ -72,11 +69,11 @@ function drawText(context, text, textConfig, fontSize) {
     context.textAlign = textAlign;
     
     // Apply shadow if configured
-    if (shadow) {
-        context.shadowColor = shadow.color || 'rgba(0, 0, 0, 0.5)';
-        context.shadowBlur = shadow.blur || 4;
-        context.shadowOffsetX = shadow.offsetX || 2;
-        context.shadowOffsetY = shadow.offsetY || 2;
+    if (shadowColor) {
+        context.shadowColor = shadowColor;
+        context.shadowBlur = shadowBlur;
+        context.shadowOffsetX = shadowOffsetX;
+        context.shadowOffsetY = shadowOffsetY;
     }
     context.fillText(text, x, y);
     

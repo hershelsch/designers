@@ -24,11 +24,7 @@ const labelNames = {
   minSize: 'ביז ווי קליין מעגן די אותיות ווערן',
   textAlign: 'טעקסט פאזיציע',
   initialOneLine: 'לכתחילה זאלן זיי זיין איין שורה',
-  splitWhenSmallerThan: 'צוטייל ווען סאיז קלענער ווי',
-  shadowColor: 'שאטן קאליר',
-  shadowBlur: 'שאטן בלור',
-  shadowOffsetX: 'אקס שאטן',
-  shadowOffsetY: 'וי שאטן',
+  splitWhenSmallerThan: 'צוטייל ווען סאיז קלענער ווי'
 }
 document.getElementById('template-upload').addEventListener('input', () => {
   createCanvas(new FormData(document.getElementById('form')));
@@ -99,12 +95,10 @@ const templateInfo = {
     textAlign: '',
     font: '',
     color: '',
-    shadow: {
-      color: '',
-      blur: 0,
-      offsetX: 0,
-      offsetY: 0
-    },
+   shadowColor: '',
+    shadowBlur: 0,
+    shadowOffsetX: 0,
+    shadowOffsetY: 0,
     initialSize: 0,
     maxWidth: 0,
     minSize: 0
@@ -115,12 +109,10 @@ const templateInfo = {
     textAlign: '',
     font: '',
     color: '',
-    shadow: {
-      color: '',
-      blur: 0,
-      offsetX: 0,
-      offsetY: 0
-    },
+    shadowColor: '',
+    shadowBlur: 0,
+    shadowOffsetX: 0,
+    shadowOffsetY: 0,
     initialSize: 0,
     maxWidth: 0,
     minSize: 0
@@ -131,12 +123,10 @@ const templateInfo = {
     textAlign: '',
     font: '',
     color: '',
-    shadow: {
-      color: '',
-      blur: 0,
-      offsetX: 0,
-      offsetY: 0
-    },
+    shadowColor: '',
+    shadowBlur: 0,
+    shadowOffsetX: 0,
+    shadowOffsetY: 0,
     initialSize: 0,
     maxWidth: 0,
     minSize: 0
@@ -149,12 +139,10 @@ const templateInfo = {
     textAlign: '',
     font: '',
     color: '',
-    shadow: {
-      color: '',
-      blur: 0,
-      offsetX: 0,
-      offsetY: 0
-    },
+    shadowColor: '',
+    shadowBlur: 0,
+    shadowOffsetX: 0,
+    shadowOffsetY: 0,
     initialSize: 0,
     maxWidth: 0,
     minSize: 0,
@@ -177,12 +165,10 @@ const templateInfo = {
     textAlign: '',
     font: '',
     color: '',
-    shadow: {
-      color: '',
-      blur: 0,
-      offsetX: 0,
-      offsetY: 0
-    },
+    shadowColor: '',
+    shadowBlur: 0,
+    shadowOffsetX: 0,
+    shadowOffsetY: 0,
     initialSize: 0,
     maxWidth: 0,
     minSize: 0
@@ -193,12 +179,10 @@ const templateInfo = {
     textAlign: '',
     font: '',
     color: '',
-    shadow: {
-      color: '',
-      blur: 0,
-      offsetX: 0,
-      offsetY: 0
-    },
+    shadowColor: '',
+    shadowBlur: 0,
+    shadowOffsetX: 0,
+    shadowOffsetY: 0,
     initialSize: 0,
     maxWidth: 0,
     minSize: 0
@@ -274,24 +258,7 @@ function createInputsForMostSections(sectionDiv, section) {
   
   for (const key in inputsTypesForMostSections) {
     if (key === 'textAlign') {
-      createTextAlignDropdown(sectionDiv, section);
-    }
-    else if (key.startsWith('shadow')) {
-      // Only create the shadow div once for all shadow properties
-      if (!shadowDiv) {
-        // First check if it already exists in the DOM
-        shadowDiv = document.getElementById(`${section}-shadow-section`);
-        if (!shadowDiv) {
-          shadowDiv = document.createElement('div');
-          shadowDiv.id = `${section}-shadow-section`;
-          shadowDiv.classList.add('shadow-section');
-          const shadowLabel = document.createElement('h3');
-          shadowLabel.textContent = 'שאטן';
-          shadowDiv.appendChild(shadowLabel);
-          sectionDiv.appendChild(shadowDiv);
-        }
-      }
-      createInput(shadowDiv, inputsTypesForMostSections[key], key, section);
+      createTextAlignDropdown(sectionDiv, section);    
     } else {
       createInput(sectionDiv, inputsTypesForMostSections[key], key, section);
     }
