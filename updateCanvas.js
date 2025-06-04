@@ -41,28 +41,19 @@ function calculateSplitFontSize(context, firstName, lastName, textConfig) {
     return Math.min(firstNameFontSize, lastNameFontSize);
 }
 
-function fitText(context, text, { initialSize, minSize, maxWidth, font, parenthesesScale }) {
+function fitText(context, text, { initialSize, minSize, maxWidth, font }) {
     // Ensure all values are numbers
     let fontSize = parseFloat(initialSize);
     const minFontSize = parseFloat(minSize);
     const maxTextWidth = parseFloat(maxWidth);
     
+     
     while (fontSize > minFontSize) {
-        // Split text into parts to handle parentheses
-        const parts = text.split(/(\([^)]+\))/g);
-        let totalWidth = 0;
+        context.font = `${fontSize}px ${font}`;
+        const textWidth = context.measureText(text).width;
+        console.log(`Text width at ${fontSize}px: ${textWidth}`);
         
-        // Calculate total width with different sizes for parentheses
-        for (const part of parts) {
-            if (part.startsWith('(') && part.endsWith(')')) {
-                context.font = `${fontSize * parenthesesScale}px ${font}`;
-            } else {
-                context.font = `${fontSize}px ${font}`;
-            }
-            totalWidth += context.measureText(part).width;
-        }
-        
-        if (totalWidth <= maxWidth) return fontSize;
+        if (textWidth <= maxTextWidth) return fontSize;
         fontSize -= 0.5; // Slightly larger decrement for faster resizing
     }
     
@@ -73,57 +64,9 @@ function drawText(context, text, textConfig, fontSize) {
     if (text === '') {
         return;
     }
-   fontSize = fontSize || fitText(context, text, textConfig);
-    const textParts = text.split(/(\([^)]+\))/g).filter(part => part !== '');
-    
-    if (textParts.length > 1) {
-        drawTextWithParentheses(context, text, textConfig, fontSize);
-    } else {
-        context.font = `${fontSize}px ${font}`;
-        context.fillStyle = color;
-        context.textAlign = textAlign;
-        
-        // Apply shadow if configured
-        if (shadowColor) {
-            context.shadowColor = shadowColor;
-            context.shadowBlur = shadowBlur;
-            context.shadowOffsetX = shadowOffsetX;
-            context.shadowOffsetY = shadowOffsetY;
-        }
-        
-        context.fillText(text, x, y);
-        
-        // Reset shadow after drawing to prevent affecting other elements
-        context.shadowColor = 'transparent';
-        context.shadowBlur = 0;
-        context.shadowOffsetX = 0;
-        context.shadowOffsetY = 0;
-    }
-}
-function drawTextWithParentheses(context, text, textConfig, fontSize) {
-    const { x, y, textAlign, color, font, shadowColor, shadowBlur, shadowOffsetX, shadowOffsetY } = textConfig;
-    // Split text into parts, capturing both regular text and parenthesized parts
-    const textParts = text.split(/(\([^)]+\))/g).filter(part => part !== '');
-    let totalWidth = 0;
-    
-    // First pass: calculate total width
-    for (const part of textParts) {
-        if (part.startsWith('(') && part.endsWith(')')) {
-            context.font = `${fontSize * textConfig.parenthesesScale}px ${font}`;
-        } else {
-            context.font = `${fontSize}px ${font}`;
-        }
-        const partWidth = context.measureText(part).width;
-        totalWidth += partWidth;
-    }
-    
-    // Determine starting position based on text alignment
-    let currentX = x;
-    if (textAlign === 'center') {
-        currentX -= totalWidth / 2;
-    } else if (textAlign === 'right') {
-        currentX -= totalWidth;
-    }
+    context.font = `${fontSize || fitText(context, text, textConfig)}px ${font}`;
+    context.fillStyle = color;
+    context.textAlign = textAlign;
     
     // Apply shadow if configured
     if (shadowColor) {
@@ -132,25 +75,11 @@ function drawTextWithParentheses(context, text, textConfig, fontSize) {
         context.shadowOffsetX = shadowOffsetX;
         context.shadowOffsetY = shadowOffsetY;
     }
+    context.fillText(text, x, y);
     
-    context.fillStyle = color;
-    context.textAlign = 'left';  // Force left alignment for individual parts
-    
-    // Draw each part with appropriate font size
-    for (const part of textParts) {
-        if (part.startsWith('(') && part.endsWith(')')) {
-            context.font = `${fontSize * textConfig.parenthesesScale}px ${font}`;
-        } else {
-            context.font = `${fontSize}px ${font}`;
-        }
-        context.fillText(part, currentX, y);
-        currentX += context.measureText(part).width;
-    }
-    
-    // Reset shadow and text alignment
+    // Reset shadow after drawing to prevent affecting other elements
     context.shadowColor = 'transparent';
     context.shadowBlur = 0;
     context.shadowOffsetX = 0;
     context.shadowOffsetY = 0;
-    context.textAlign = textAlign;  // Restore original text alignment
 }

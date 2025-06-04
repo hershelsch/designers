@@ -61,8 +61,7 @@ const inputsTypesForMostSections = {
   shadowOffsetY: 'number',
   initialSize: 'number',
   maxWidth: 'number',
-  minSize: 'number',
-  parenthesesScale: 'number'
+  minSize: 'number'
 }
 const inputsTypesForNameSection = {
   initialOneLine: 'checkbox',
@@ -79,16 +78,14 @@ const inputsTypesForNameSection = {
   shadowOffsetY: 'number',
   initialSize: 'number',
   maxWidth: 'number',
-  minSize: 'number',
-  parenthesesScale: 'number'
+  minSize: 'number'
 }
 const inputsTypesForNameSubSections = {
   y: 'number',
   x: 'number',
   centerOfPage: 'button',
   textAlign: 'select',
-  maxWidth: 'number',
-  parenthesesScale: 'number'
+  maxWidth: 'number'
 }
 const sections = ['when', 'where', 'address', 'name', 'fathersName', 'fatherInlawsName'];
 const templateInfo = {
@@ -104,8 +101,7 @@ const templateInfo = {
     shadowOffsetY: 0,
     initialSize: 0,
     maxWidth: 0,
-    minSize: 0,
-    parenthesesScale: 0.8
+    minSize: 0
   },
   where: {
     y: 0,
@@ -119,8 +115,7 @@ const templateInfo = {
     shadowOffsetY: 0,
     initialSize: 0,
     maxWidth: 0,
-    minSize: 0,
-    parenthesesScale: 0.8
+    minSize: 0
   },
   address: {
     y: 0,
@@ -134,8 +129,7 @@ const templateInfo = {
     shadowOffsetY: 0,
     initialSize: 0,
     maxWidth: 0,
-    minSize: 0,
-    parenthesesScale: 0.8
+    minSize: 0
   },
   name: {
     initialOneLine: true,
@@ -152,20 +146,17 @@ const templateInfo = {
     initialSize: 0,
     maxWidth: 0,
     minSize: 0,
-    parenthesesScale: 0.8,
     firstName: {
       y: 0,
       textAlign: '',
       x: 0,
-      maxWidth: 0,
-      parenthesesScale: 0.8
+      maxWidth: 0
     },
     lastName: {
       y: 0,
       textAlign: '',
       x: 0,
-      maxWidth: 0,
-      parenthesesScale: 0.8
+      maxWidth: 0
     }
   },
   fathersName: {
@@ -180,8 +171,7 @@ const templateInfo = {
     shadowOffsetY: 0,
     initialSize: 0,
     maxWidth: 0,
-    minSize: 0,
-    parenthesesScale: 0.8
+    minSize: 0
   },
   fatherInlawsName: {
     y: 0,
@@ -195,8 +185,7 @@ const templateInfo = {
     shadowOffsetY: 0,
     initialSize: 0,
     maxWidth: 0,
-    minSize: 0,
-    parenthesesScale: 0.8
+    minSize: 0
   }
 };
 
@@ -356,13 +345,7 @@ function createInput(sectionDiv, type, key, section) {
   const label = document.createElement('label');
   label.htmlFor = input.id;
   label.textContent = labelNames[key] || key;
-if (key === 'parenthesesScale') {
-  //step is 0.1 for parenthesesScale
-  input.step = '0.1';
-}
-  if (type === 'number') {
-    input.min = 0; // Set minimum value for number inputs
-  }
+
   // If this is an x input, create special container with center button
   if (key === 'x') {
     const container = document.createElement('div');
