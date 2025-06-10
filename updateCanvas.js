@@ -14,11 +14,27 @@ function updateCanvas(canvas, image, textConfig, contents) {
     }
     const { fontSize, shouldSplit } = determineNameTextLayout(context, textConfig['name'], firstName, lastName);
     if (shouldSplit) {
-        drawText(context, firstName, { ...textConfig.name.firstName, color: textConfig.name.color, font: textConfig.name.font, shadowColor: textConfig.name.shadowColor, shadowBlur: textConfig.name.shadowBlur, shadowOffsetX: textConfig.name.shadowOffsetX, shadowOffsetY: textConfig.name.shadowOffsetY }, fontSize);
-        drawText(context, lastName, { ...textConfig.name.lastName, color: textConfig.name.color, font: textConfig.name.font, shadowColor: textConfig.name.shadowColor, shadowBlur: textConfig.name.shadowBlur, shadowOffsetX: textConfig.name.shadowOffsetX, shadowOffsetY: textConfig.name.shadowOffsetY }, fontSize);
+        const whenSplitedConfig = textConfig['name']['whenSplited'];
+        const firstNameConfig = getSplitNameConfig(whenSplitedConfig, whenSplitedConfig['firstName']);
+        const lastNameConfig = getSplitNameConfig(whenSplitedConfig, whenSplitedConfig['lastName']);
+        // Draw first name and last name separately
+        drawText(context, firstName, firstNameConfig, fontSize);
+        drawText(context, lastName, lastNameConfig, fontSize);
     } else {
         drawText(context, `${firstName} ${lastName}`, textConfig.name, fontSize);
     }
+}
+
+function getSplitNameConfig(baseConfig, partConfig) {
+    return {
+        ...partConfig,
+        font: baseConfig.font,
+        color: baseConfig.color,
+        shadowColor: baseConfig.shadowColor,
+        shadowBlur: baseConfig.shadowBlur,
+        shadowOffsetX: baseConfig.shadowOffsetX,
+        shadowOffsetY: baseConfig.shadowOffsetY
+    };
 }
 
 function determineNameTextLayout(context, textConfig, firstName, lastName) {
@@ -36,8 +52,8 @@ function determineNameTextLayout(context, textConfig, firstName, lastName) {
 }
 
 function calculateSplitFontSize(context, firstName, lastName, textConfig) {
-    const firstNameFontSize = fitText(context, firstName, { ...textConfig, maxWidth: textConfig.firstName.maxWidth });
-    const lastNameFontSize = fitText(context, lastName, { ...textConfig, maxWidth: textConfig.lastName.maxWidth });
+    const firstNameFontSize = fitText(context, firstName, { ...textConfig });
+    const lastNameFontSize = fitText(context, lastName, { ...textConfig });
     return Math.min(firstNameFontSize, lastNameFontSize);
 }
 

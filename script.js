@@ -92,7 +92,6 @@ const inputsTypesForNameSubSection = {
   shadowBlur: 'number',
   shadowOffsetX: 'number',
   shadowOffsetY: 'number',
-  skew: 'number' // Add skew input
 }
 const inputsTypesForNameSubSections = {
   y: 'number',
@@ -174,7 +173,6 @@ const templateInfo = {
       shadowOffsetY: 0,
       initialSize: 0,
       minSize: 0,
-      skew: 0,
       firstName: {
         y: 0,
         textAlign: '',
@@ -189,20 +187,6 @@ const templateInfo = {
         maxWidth: 0,
         skew: 0
       }
-    },
-    firstName: {
-      y: 0,
-      textAlign: '',
-      x: 0,
-      maxWidth: 0,
-      skew: 0
-    },
-    lastName: {
-      y: 0,
-      textAlign: '',
-      x: 0,
-      maxWidth: 0,
-      skew: 0
     }
   },
   fathersName: {
