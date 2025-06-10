@@ -60,15 +60,31 @@ function fitText(context, text, { initialSize, minSize, maxWidth, font }) {
     return fontSize;
 }
 function drawText(context, text, textConfig, fontSize) {
-    const { x, y, textAlign, color, font, shadowColor, shadowBlur, shadowOffsetX, shadowOffsetY } = textConfig;
+    const { x, y, textAlign, color, font, shadowColor, shadowBlur, shadowOffsetX, shadowOffsetY, skew } = textConfig;
     if (text === '') {
         return;
     }
+    context.save();
     context.font = `${fontSize || fitText(context, text, textConfig)}px ${font}`;
     context.fillStyle = color;
     context.textAlign = textAlign;
-    
-    // Apply shadow if configured
+    // Apply baseline skew (right side higher)
+    if (typeof skew === 'number' && !isNaN(skew) && skew !== 0) {
+        const skewRad = skew * Math.PI / 180;
+        context.translate(x, y);
+        context.rotate(-skewRad); // negative for right side higher
+        // Draw at (0,0) after transform
+        if (shadowColor) {
+            context.shadowColor = shadowColor;
+            context.shadowBlur = shadowBlur;
+            context.shadowOffsetX = shadowOffsetX;
+            context.shadowOffsetY = shadowOffsetY;
+        }
+        context.fillText(text, 0, 0);
+        context.restore();
+        return;
+    }
+    // Apply shadow if configured (no skew)
     if (shadowColor) {
         context.shadowColor = shadowColor;
         context.shadowBlur = shadowBlur;
@@ -76,10 +92,5 @@ function drawText(context, text, textConfig, fontSize) {
         context.shadowOffsetY = shadowOffsetY;
     }
     context.fillText(text, x, y);
-    
-    // Reset shadow after drawing to prevent affecting other elements
-    context.shadowColor = 'transparent';
-    context.shadowBlur = 0;
-    context.shadowOffsetX = 0;
-    context.shadowOffsetY = 0;
+    context.restore();
 }

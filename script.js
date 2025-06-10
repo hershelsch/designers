@@ -24,7 +24,8 @@ const labelNames = {
   minSize: 'ביז ווי קליין מעגן די אותיות ווערן',
   textAlign: 'טעקסט פאזיציע',
   initialOneLine: 'לכתחילה זאלן זיי זיין איין שורה',
-  splitWhenSmallerThan: 'צוטייל ווען סאיז קלענער ווי'
+  splitWhenSmallerThan: 'צוטייל ווען סאיז קלענער ווי',
+  skew:' שיף'
 }
 document.getElementById('template-upload').addEventListener('input', () => {
   createCanvas(new FormData(document.getElementById('form')));
@@ -61,7 +62,8 @@ const inputsTypesForMostSections = {
   shadowOffsetY: 'number',
   initialSize: 'number',
   maxWidth: 'number',
-  minSize: 'number'
+  minSize: 'number',
+  skew: 'number' // Add skew input
 }
 const inputsTypesForNameSection = {
   initialOneLine: 'checkbox',
@@ -78,14 +80,27 @@ const inputsTypesForNameSection = {
   shadowOffsetY: 'number',
   initialSize: 'number',
   maxWidth: 'number',
-  minSize: 'number'
+  minSize: 'number',
+  skew: 'number' // Add skew input
+}
+const inputsTypesForNameSubSection = {
+  initialSize: 'number',
+  minSize: 'number',
+  font: 'text',
+  color: 'color',
+  shadowColor: 'color',
+  shadowBlur: 'number',
+  shadowOffsetX: 'number',
+  shadowOffsetY: 'number',
+  skew: 'number' // Add skew input
 }
 const inputsTypesForNameSubSections = {
   y: 'number',
   x: 'number',
   centerOfPage: 'button',
   textAlign: 'select',
-  maxWidth: 'number'
+  maxWidth: 'number',
+  skew: 'number' // Add skew input
 }
 const sections = ['when', 'where', 'address', 'name', 'fathersName', 'fatherInlawsName'];
 const templateInfo = {
@@ -101,7 +116,8 @@ const templateInfo = {
     shadowOffsetY: 0,
     initialSize: 0,
     maxWidth: 0,
-    minSize: 0
+    minSize: 0,
+    skew: 0
   },
   where: {
     y: 0,
@@ -115,7 +131,8 @@ const templateInfo = {
     shadowOffsetY: 0,
     initialSize: 0,
     maxWidth: 0,
-    minSize: 0
+    minSize: 0,
+    skew: 0
   },
   address: {
     y: 0,
@@ -129,7 +146,8 @@ const templateInfo = {
     shadowOffsetY: 0,
     initialSize: 0,
     maxWidth: 0,
-    minSize: 0
+    minSize: 0,
+    skew: 0
   },
   name: {
     initialOneLine: true,
@@ -146,17 +164,45 @@ const templateInfo = {
     initialSize: 0,
     maxWidth: 0,
     minSize: 0,
+    skew: 0,
+    whenSplited: {
+      font: '',
+      color: '',
+      shadowColor: '',
+      shadowBlur: 0,
+      shadowOffsetX: 0,
+      shadowOffsetY: 0,
+      initialSize: 0,
+      minSize: 0,
+      skew: 0,
+      firstName: {
+        y: 0,
+        textAlign: '',
+        x: 0,
+        maxWidth: 0,
+        skew: 0
+      },
+      lastName: {
+        y: 0,
+        textAlign: '',
+        x: 0,
+        maxWidth: 0,
+        skew: 0
+      }
+    },
     firstName: {
       y: 0,
       textAlign: '',
       x: 0,
-      maxWidth: 0
+      maxWidth: 0,
+      skew: 0
     },
     lastName: {
       y: 0,
       textAlign: '',
       x: 0,
-      maxWidth: 0
+      maxWidth: 0,
+      skew: 0
     }
   },
   fathersName: {
@@ -171,7 +217,8 @@ const templateInfo = {
     shadowOffsetY: 0,
     initialSize: 0,
     maxWidth: 0,
-    minSize: 0
+    minSize: 0,
+    skew: 0
   },
   fatherInlawsName: {
     y: 0,
@@ -185,7 +232,8 @@ const templateInfo = {
     shadowOffsetY: 0,
     initialSize: 0,
     maxWidth: 0,
-    minSize: 0
+    minSize: 0,
+    skew: 0
   }
 };
 
@@ -267,14 +315,21 @@ function createInputsForMostSections(sectionDiv, section) {
 function createNameSection(sectionDiv) {
 
   createInputsForNameSection(sectionDiv);
-  const nameSubSectionDiv = document.createElement('div');
-  nameSubSectionDiv.classList.add('name-sub-section');
-  nameSubSectionDiv.id = 'name-sub';
-  const nameSubSectionLabel = document.createElement('h3');
-  nameSubSectionLabel.classList.add('section-label');
-  nameSubSectionLabel.textContent = 'אויב סאיז צוטיילט';
-  nameSubSectionDiv.appendChild(nameSubSectionLabel);
-  sectionDiv.appendChild(nameSubSectionDiv);
+  const whenSplitedDiv = document.createElement('div');
+  whenSplitedDiv.classList.add('when-splited-section');
+  whenSplitedDiv.id = 'when-splited';
+  const whenSplitedLabel = document.createElement('h3');
+  whenSplitedLabel.classList.add('section-label');
+  whenSplitedLabel.textContent = 'אויב סאיז צוטיילט';
+  whenSplitedDiv.appendChild(whenSplitedLabel);
+  sectionDiv.appendChild(whenSplitedDiv);
+  for (const key in inputsTypesForNameSubSection) {
+    if (key === 'textAlign') {
+      createTextAlignDropdown(whenSplitedDiv, 'split');
+    } else {
+      createInput(whenSplitedDiv, inputsTypesForNameSubSection[key], key, 'split');
+    }
+  }
   for (const name of ['firstName', 'lastName']) {
     const nameDiv = document.createElement('div');
     const nameLabel = document.createElement('h3');
@@ -283,7 +338,7 @@ function createNameSection(sectionDiv) {
     nameDiv.appendChild(nameLabel);
     nameDiv.classList.add(`${name}-section`);
     nameDiv.id = `${name}-section`;
-    nameSubSectionDiv.appendChild(nameDiv);
+    whenSplitedDiv.appendChild(nameDiv);
     createInputsForNameSubSection(nameDiv, name);
   }
 }

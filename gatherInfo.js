@@ -9,12 +9,13 @@ function gatherInfo(templateInfo) {
     getInputsValue(sectionInfo, sectionDiv);
     if (section == 'name') {
 
-      const nameSubSectionDiv = document.getElementById('name-sub');
-      const nameSubSectionInfo = templateInfo['name'];
-
+      const whenSplitedDiv = document.getElementById('when-splited');
+      const whenSplitedInfo = sectionInfo['whenSplited'];
+//also get the whenSplited section
+      getInputsValue(whenSplitedInfo, whenSplitedDiv);
       for (const name of ['firstName', 'lastName']) {
-        const div = nameSubSectionDiv.querySelector(`.${name}-section`);
-        getInputsValue(nameSubSectionInfo[name], div);
+        const div = whenSplitedDiv.querySelector(`.${name}-section`);
+        getInputsValue(whenSplitedInfo[name], div);
       }
     }
   }
